@@ -1,3 +1,5 @@
+use std::{collections::HashSet};
+
 fn main() {
   task1();
   task2();
@@ -5,19 +7,21 @@ fn main() {
 
 fn task1() {
   let input = std::fs:: read_to_string("./src/bin/day3/input.txt").unwrap();
-  let rows = input.split('\n').map(|rucksack| rucksack.split_at(rucksack.len() / 2));
-
-  let mut sum = 0;
-  for (left, right) in rows {
-    for char in left.chars() {
-      if right.contains(char) {
-        sum += get_priority(char);
-        break;
-      }
+  let rows = input
+    .split('\n')
+    .map(|rucksack| rucksack.split_at(rucksack.len() / 2))
+    .map(|(left, right)| {
+      left.chars()
+          .collect::<HashSet<_>>()
+          .intersection(&right.chars().collect::<HashSet<_>>())
+          .filter(|c| c != &&'\0')
+          .map(|c| *c)
+          .map(|c| get_priority(c))
+          .sum::<u32>()
     }
-  }
+    ).sum::<u32>();
 
-  println!("{}", sum);
+  println!("{}", rows);
 }
 
 fn task2() {
