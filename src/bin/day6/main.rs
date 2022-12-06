@@ -12,8 +12,8 @@ fn task1() {
   let mut index = 0;
   for i in 0..(input.len() - 3) {
     let chunk = input.get(i..i+4).unwrap().chars();
-    println!("{:?}", chunk);
     let set: HashSet<char> = HashSet::from_iter(chunk);
+
     if set.len() == 4 {
       index = i + 4;
       break;
@@ -31,6 +31,7 @@ fn task2() {
   for i in 0..(input.len() - 13) {
     let chunk = input.get(i..i + 14).unwrap().chars();
     let set: HashSet<char> = HashSet::from_iter(chunk);
+
     if set.len() == 14 {
       index = i + 14;
       break;

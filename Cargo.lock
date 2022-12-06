@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "meepo"
+name = "advent-of-code"
 version = "0.1.0"
