@@ -1,77 +1,100 @@
-use std::ops::Deref;
-
 use orange_trees::{Node, Tree};
 
 fn main() {
   task1();
+  task2();
 }
 
 fn task1() {
-  let input = std::fs::read_to_string("./src/bin/day7/example.txt")
+  let input = std::fs::read_to_string("./src/bin/day7/input.txt")
     .expect("Unable to read the file");
 
-  let tree: Tree<&str, u32> = Tree::new(
-    Node::new("/", 0)
+  let tree: Tree<String, u32> = Tree::new(
+    Node::new(String::from("/"), 0)
   );
 
-  let mut defa = String::from("/");
-
-  let dirs = vec!["/"];
+  let mut dirs: Vec<String> = vec![String::from("/")];
 
   let (new_tree, _) = input
     .split('\n')
-    .fold((tree, &mut defa), |acc, cur| {
-      let (mut tree, position) = acc;
+    .fold((tree, String::from("")), |acc, cur| {
+      let (tree, position) = acc;
 
-      if cur.contains("$ cd ..") {
-        let address = position.split('/').collect::<Vec<_>>();
-        let ad = &address[0..address.len()].join("/");
-
-        position.clear();
-        position.push_str(ad);
-
+      if cur.starts_with("$ cd ..") {
+        return go_up(tree, position, cur);
+      } else if cur.starts_with("$ cd /") {
+        return go_home(tree);
+      } else if cur.starts_with("$ cd") {
+        return go_to(tree, position, cur);
+      } else if cur.starts_with("$ ls") {
         return (tree, position);
-      } else if cur.contains("$ cd") {
-        let id = cur.split_whitespace().last().expect("No last element");
-
-        position.push('/');
-        position.push_str(id);
-
-        return (tree, position);
-      } else if cur.contains("$ ls") {
-        return (tree, position);
-      } else if cur.contains("dir") {
-        let name = cur.split(' ').last().expect("No name for dir");
-        let me = position.clone();
-        
-        let current_node = tree.root_mut().query_mut(&(me.as_str()))
-          .expect("Unable to find current node");
-        
-        current_node.add_child(Node::new(name, 0));
-        drop(current_node);
-        
-        return (tree, position);
+      } else if cur.starts_with("dir") {
+        let (res_tree, res_position, res_dir) = create_dir(tree, position, cur);
+        dirs.push(res_dir);
+        return (res_tree, res_position);
       } else {
-        let (size, name) = cur.split_once(' ').expect("Invalid split");
-        let parsed_size = size.parse::<u32>().expect("Error parsing");
-
-        let current_node = tree.root_mut().query_mut(&(position.clone().as_str()))
-          .expect("Unable to find current node");
-
-        current_node.add_child(Node::new(name, parsed_size));
-        
-        return (tree, position);
+        return create_file(tree, position, cur);
       }
     });
 
     let dirs_with_size = dirs.iter().map(|x| calc_node_value(new_tree.root().query(x).expect("No id")))
-    .filter(|size| size < &100000)
-    .sum::<u32>();
+      .filter(|size| size < &100000)
+      .sum::<u32>();
+
+    println!("{:?}, {:?}", dirs_with_size, dirs);
+}
+
+fn task2() {
+  let input = std::fs::read_to_string("./src/bin/day7/input.txt")
+    .expect("Unable to read the file");
+
+  let tree: Tree<String, u32> = Tree::new(
+    Node::new(String::from("/"), 0)
+  );
+
+  let total_space = 70000000;
+  let needed_space = 30000000;
+
+  let mut dirs: Vec<String> = vec![String::from("/")];
+
+  let (new_tree, _) = input
+    .split('\n')
+    .fold((tree, String::from("")), |acc, cur| {
+      let (tree, position) = acc;
+
+      if cur.starts_with("$ cd ..") {
+        return go_up(tree, position, cur);
+      } else if cur.starts_with("$ cd /") {
+        return go_home(tree);
+      } else if cur.starts_with("$ cd") {
+        return go_to(tree, position, cur);
+      } else if cur.starts_with("$ ls") {
+        return (tree, position);
+      } else if cur.starts_with("dir") {
+        let (res_tree, res_position, res_dir) = create_dir(tree, position, cur);
+        dirs.push(res_dir);
+        return (res_tree, res_position);
+      } else {
+        return create_file(tree, position, cur);
+      }
+    });
+
+    let used_space = calc_node_value(new_tree.root());
+    let free_space = total_space - used_space;
+    let min_space_to_remove = needed_space - free_space;
+
+    let dirs_with_size = dirs
+      .iter()
+      .map(|x| calc_node_value(new_tree.root().query(x).expect("No id")))
+      .filter(|size| size > &min_space_to_remove)
+      .min()
+      .expect("No minimum");
+
 
     println!("{:?}", dirs_with_size);
 }
 
-fn calc_node_value(node: &Node<&str, u32>) -> u32 {
+fn calc_node_value(node: &Node<String, u32>) -> u32 {
   let value = *node.value();
 
   if value != 0 {
@@ -79,4 +102,62 @@ fn calc_node_value(node: &Node<&str, u32>) -> u32 {
   } else {
     return value + node.children().iter().map(|x| calc_node_value(x)).sum::<u32>();
   }
+}
+
+fn go_up(tree: Tree<String, u32>, position: String, _cur: &str) -> (Tree<String, u32>, String) {
+  let address = position.split(':').collect::<Vec<_>>();
+  let ad = &address[0..address.len() - 1].join(":");
+
+  let mut new_position = String::new();
+  new_position.push_str(ad);
+
+  return (tree, new_position);
+}
+
+fn go_home(tree: Tree<String, u32>) -> (Tree<String, u32>, String) {
+  let new_position = String::from("/");
+  return (tree, new_position);
+}
+
+fn go_to(tree: Tree<String, u32>, position: String, cur: &str) -> (Tree<String, u32>, String) {
+  let id = cur.split_whitespace().last().expect("No last element");
+
+  let mut new_position = position.clone();
+  new_position.push(':');
+  new_position.push_str(id);
+
+
+  return (tree, new_position);
+}
+
+fn create_dir(mut tree: Tree<String, u32>, position: String, cur: &str) -> (Tree<String, u32>, String, String) {
+  let name = cur.split(' ').last().expect("No name for dir");
+
+  let current_node = tree.root_mut().query_mut(&position)
+    .expect("Unable to find current node");
+
+  let mut new_position = position.clone();
+  new_position.push(':');
+  new_position.push_str(name);
+  let res = new_position.clone();
+
+  current_node.add_child(Node::new(new_position, 0));
+  
+  return (tree, position, res);
+}
+
+fn create_file(mut tree: Tree<String, u32>, position: String, cur: &str) -> (Tree<String, u32>, String) {
+  let (size, name) = cur.split_once(' ').expect("Invalid split");
+  let parsed_size = size.parse::<u32>().expect("Error parsing");
+
+  let current_node = tree.root_mut().query_mut(&position)
+    .expect("Unable to find current node1");
+
+  let mut new_position = position.clone();
+  new_position.push(':');
+  new_position.push_str(name);
+
+  current_node.add_child(Node::new(new_position, parsed_size));
+  
+  return (tree, position);
 }
