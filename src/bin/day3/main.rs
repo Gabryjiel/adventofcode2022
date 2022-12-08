@@ -14,9 +14,8 @@ fn task1() {
             left.chars()
                 .collect::<HashSet<_>>()
                 .intersection(&right.chars().collect::<HashSet<_>>())
-                .filter(|c| c != &&'\0')
-                .map(|c| *c)
-                .map(|c| get_priority(c))
+                .filter(|c| c != &&'\0').copied()
+                .map(get_priority)
                 .sum::<u32>()
         })
         .sum::<u32>();

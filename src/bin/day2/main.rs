@@ -2,11 +2,11 @@ fn main() {
     let input = std::fs::read_to_string("./src/bin/day2/input.txt").unwrap();
     let sum1 = input
         .split('\n')
-        .map(|x| task1::calculate_score(x))
+        .map(task1::calculate_score)
         .sum::<i32>();
     let sum2 = input
         .split('\n')
-        .map(|x| task2::calculate_score(x))
+        .map(task2::calculate_score)
         .sum::<i32>();
 
     println!("1: {}", sum1);
@@ -29,9 +29,9 @@ pub mod task1 {
     }
 
     fn played_item(round: &str) -> i32 {
-        if round.ends_with("X") {
+        if round.ends_with('X') {
             1
-        } else if round.ends_with("Y") {
+        } else if round.ends_with('Y') {
             2
         } else {
             3

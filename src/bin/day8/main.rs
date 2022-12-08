@@ -25,7 +25,7 @@ fn task1() {
             for (x, _) in line.iter().enumerate() {
                 let is_tree_visible = is_visible(&me, &x, &y);
 
-                if is_tree_visible == true {
+                if is_tree_visible {
                     sum += 1;
                 } else {
                     // println!("{}, {}", x, y);

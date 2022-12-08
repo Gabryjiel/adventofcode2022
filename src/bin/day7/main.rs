@@ -19,19 +19,19 @@ fn task1() {
             let (tree, position) = acc;
 
             if cur.starts_with("$ cd ..") {
-                return go_up(tree, position, cur);
+                go_up(tree, position, cur)
             } else if cur.starts_with("$ cd /") {
-                return go_home(tree);
+                go_home(tree)
             } else if cur.starts_with("$ cd") {
-                return go_to(tree, position, cur);
+                go_to(tree, position, cur)
             } else if cur.starts_with("$ ls") {
-                return (tree, position);
+                (tree, position)
             } else if cur.starts_with("dir") {
                 let (res_tree, res_position, res_dir) = create_dir(tree, position, cur);
                 dirs.push(res_dir);
-                return (res_tree, res_position);
+                (res_tree, res_position)
             } else {
-                return create_file(tree, position, cur);
+                create_file(tree, position, cur)
             }
         });
 
@@ -61,19 +61,19 @@ fn task2() {
             let (tree, position) = acc;
 
             if cur.starts_with("$ cd ..") {
-                return go_up(tree, position, cur);
+                go_up(tree, position, cur)
             } else if cur.starts_with("$ cd /") {
-                return go_home(tree);
+                go_home(tree)
             } else if cur.starts_with("$ cd") {
-                return go_to(tree, position, cur);
+                go_to(tree, position, cur)
             } else if cur.starts_with("$ ls") {
-                return (tree, position);
+                (tree, position)
             } else if cur.starts_with("dir") {
                 let (res_tree, res_position, res_dir) = create_dir(tree, position, cur);
                 dirs.push(res_dir);
-                return (res_tree, res_position);
+                (res_tree, res_position)
             } else {
-                return create_file(tree, position, cur);
+                create_file(tree, position, cur)
             }
         });
 
@@ -95,13 +95,13 @@ fn calc_node_value(node: &Node<String, u32>) -> u32 {
     let value = *node.value();
 
     if value != 0 {
-        return value;
+        value
     } else {
         return value
             + node
                 .children()
                 .iter()
-                .map(|x| calc_node_value(x))
+                .map(calc_node_value)
                 .sum::<u32>();
     }
 }
@@ -113,22 +113,22 @@ fn go_up(tree: Tree<String, u32>, position: String, _cur: &str) -> (Tree<String,
     let mut new_position = String::new();
     new_position.push_str(ad);
 
-    return (tree, new_position);
+    (tree, new_position)
 }
 
 fn go_home(tree: Tree<String, u32>) -> (Tree<String, u32>, String) {
     let new_position = String::from("/");
-    return (tree, new_position);
+    (tree, new_position)
 }
 
 fn go_to(tree: Tree<String, u32>, position: String, cur: &str) -> (Tree<String, u32>, String) {
     let id = cur.split_whitespace().last().expect("No last element");
 
-    let mut new_position = position.clone();
+    let mut new_position = position;
     new_position.push(':');
     new_position.push_str(id);
 
-    return (tree, new_position);
+    (tree, new_position)
 }
 
 fn create_dir(
@@ -150,7 +150,7 @@ fn create_dir(
 
     current_node.add_child(Node::new(new_position, 0));
 
-    return (tree, position, res);
+    (tree, position, res)
 }
 
 fn create_file(
@@ -172,5 +172,5 @@ fn create_file(
 
     current_node.add_child(Node::new(new_position, parsed_size));
 
-    return (tree, position);
+    (tree, position)
 }

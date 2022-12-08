@@ -25,8 +25,7 @@ fn task1() {
 
     let crates_parsed = crates_final
         .iter()
-        .filter(|x| x.len() > 0)
-        .map(|x| x.clone())
+        .filter(|x| !x.is_empty()).cloned()
         .collect::<Vec<_>>();
 
     let commands_parsed = commands
@@ -42,7 +41,7 @@ fn task1() {
         .map(|x| (x[0], x[1] - 1, x[2] - 1))
         .collect::<Vec<_>>();
 
-    let mut state = crates_parsed.clone();
+    let mut state = crates_parsed;
     for (amount, start, end) in commands_parsed {
         let crates_to_move = state[start][0..amount]
             .iter()
@@ -88,8 +87,7 @@ fn task2() {
 
     let crates_parsed = crates_final
         .iter()
-        .filter(|x| x.len() > 0)
-        .map(|x| x.clone())
+        .filter(|x| !x.is_empty()).cloned()
         .collect::<Vec<_>>();
 
     let commands_parsed = commands
@@ -105,7 +103,7 @@ fn task2() {
         .map(|x| (x[0], x[1] - 1, x[2] - 1))
         .collect::<Vec<_>>();
 
-    let mut state = crates_parsed.clone();
+    let mut state = crates_parsed;
     for (amount, start, end) in commands_parsed {
         let mut crates_to_move = state[start][0..amount]
             .iter()
