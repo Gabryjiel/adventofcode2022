@@ -97,12 +97,7 @@ fn calc_node_value(node: &Node<String, u32>) -> u32 {
     if value != 0 {
         value
     } else {
-        return value
-            + node
-                .children()
-                .iter()
-                .map(calc_node_value)
-                .sum::<u32>();
+        return value + node.children().iter().map(calc_node_value).sum::<u32>();
     }
 }
 

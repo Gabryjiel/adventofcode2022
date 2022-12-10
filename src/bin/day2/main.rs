@@ -1,13 +1,7 @@
 fn main() {
     let input = std::fs::read_to_string("./src/bin/day2/input.txt").unwrap();
-    let sum1 = input
-        .split('\n')
-        .map(task1::calculate_score)
-        .sum::<i32>();
-    let sum2 = input
-        .split('\n')
-        .map(task2::calculate_score)
-        .sum::<i32>();
+    let sum1 = input.split('\n').map(task1::calculate_score).sum::<i32>();
+    let sum2 = input.split('\n').map(task2::calculate_score).sum::<i32>();
 
     println!("1: {}", sum1);
     println!("2: {}", sum2);

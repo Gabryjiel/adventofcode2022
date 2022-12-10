@@ -25,7 +25,8 @@ fn task1() {
 
     let crates_parsed = crates_final
         .iter()
-        .filter(|x| !x.is_empty()).cloned()
+        .filter(|x| !x.is_empty())
+        .cloned()
         .collect::<Vec<_>>();
 
     let commands_parsed = commands
@@ -87,7 +88,8 @@ fn task2() {
 
     let crates_parsed = crates_final
         .iter()
-        .filter(|x| !x.is_empty()).cloned()
+        .filter(|x| !x.is_empty())
+        .cloned()
         .collect::<Vec<_>>();
 
     let commands_parsed = commands
