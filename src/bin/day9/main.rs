@@ -71,7 +71,7 @@ fn task2() {
     let input =
         std::fs::read_to_string("./src/bin/day9/example2.txt").expect("Unable to read the file");
 
-    let (_head_positions, tail_positions, _) = input
+    let (_head_positions, _tail_positions, _) = input
         .split('\n')
         .map(|x| x.split_once(' ').expect("Canno split_once"))
         .map(|(direction, steps)| (direction, steps.parse::<u32>().expect("Cannot parse")))
@@ -174,7 +174,7 @@ fn task2() {
                 print!(".");
             }
         }
-        print!("\n");
+        println!();
     }
 
     println!("{:?}", vector);
@@ -239,6 +239,6 @@ fn display_positions(positions: Vec<(i32, i32)>) {
                 print!(".");
             }
         }
-        print!("\n");
+        println!();
     }
 }
