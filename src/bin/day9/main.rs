@@ -108,8 +108,16 @@ fn task2() {
                 .sqrt();
 
             let new_tail_position = if distance_between_tail_and_head >= 2.1 {
-                let x_dist = if last_head_position_x - last_tail_position_x > 0 { 1 } else { -1 };
-                let y_dist = if last_head_position_y - last_tail_position_y > 0 { 1 } else { -1 };
+                let x_dist = if last_head_position_x - last_tail_position_x > 0 {
+                    1
+                } else {
+                    -1
+                };
+                let y_dist = if last_head_position_y - last_tail_position_y > 0 {
+                    1
+                } else {
+                    -1
+                };
 
                 (
                     *last_tail_position_x + x_dist,
@@ -135,7 +143,6 @@ fn task2() {
             (head_positions, tail_positions, counter)
         });
 
-    
     let tail1 = get_tail_positions(_head_positions.clone());
     let tail2 = get_tail_positions(tail1.clone());
     let tail3 = get_tail_positions(tail2.clone());
